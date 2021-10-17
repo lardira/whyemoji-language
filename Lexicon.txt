@@ -1,0 +1,37 @@
+NOTE: It's recomended to copypaste emojis from here into an anyname.why, otherwise the compiler may throw an error
+
+Operators
+✖ Multiply
+➕ Plus
+➖ Minus
+➗ Divide
+✋End Code Line
+👉 Declare/Assign
+🖨️ Print to console
+🤝 Elements Linker
+
+Objects
+🙂...🤔 Variable names
+🚌 Array
+
+❓ if
+✔️ if true
+❌ if false
+Loops
+🔁 Repeat Button
+
+Types
+🔢 Integer
+Digits
+0️⃣ Digit Zero
+1️⃣ Digit One
+2️⃣ Digit Two
+3️⃣ Digit Three
+4️⃣ Digit Four
+5️⃣ Digit Five
+6️⃣ Digit Six
+7️⃣ Digit Seven
+8️⃣ Digit Eight
+9️⃣ Digit Nine
+
+🔤 String

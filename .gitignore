@@ -2,7 +2,8 @@
 /*
 #Except:
 !.gitignore
-!.README.md
+!README.md
+!Lexicon.txt
 
 !src/
 !test/
