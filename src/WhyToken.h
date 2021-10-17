@@ -1,8 +1,9 @@
 #pragma once
+
 #include <iostream>
 #include <string>
 
-class Token
+class WhyToken
 {
 public:
 	enum class Type
@@ -15,23 +16,22 @@ public:
 		Integer,
 		String,
 	};
-
-	Token() = delete;
-	~Token() = default;
+public:
+	WhyToken() = delete;
+	~WhyToken() = default;
 	
-	Token(Type type, wchar_t value)
+	WhyToken(Type type, char value)
 		: type(type), value(value) {}
 
-	Token(Type type)
+	WhyToken(Type type)
 		: type(type) {}
 
-	wchar_t GetValue() const;
-	Token::Type GetType() const;
+	char GetValue() const;
+	WhyToken::Type GetType() const;
 	std::string GetTypeToString() const;
-
 private:
 	Type type = Type::Undefined;
-	wchar_t value = 0;
+	char value = -1;
 
 	std::string TypeToString() const;
 };
