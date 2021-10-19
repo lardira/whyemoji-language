@@ -1,4 +1,5 @@
-NOTE: It's recomended to copypaste emojis from here into an anyname.why, otherwise the compiler may throw an error
+NOTE: It's recomended to copypaste emojis from here into an anyname.why, otherwise 
+the compiler may throw an error
 
 Operators
 ✖ Multiply
@@ -9,6 +10,7 @@ Operators
 👉 Declare/Assign
 🖨️ Print to console
 🤝 Elements Linker
+〖〗Parentheses
 
 Objects
 🙂...🤔 Variable names
@@ -35,3 +37,5 @@ Digits
 9️⃣ Digit Nine
 
 🔤 String
+
+Misc

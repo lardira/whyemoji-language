@@ -1,6 +1,6 @@
 #include "WhyToken.h"
 
-char WhyToken::GetValue() const
+int WhyToken::GetValue() const
 {
 	return value;
 }
@@ -17,30 +17,44 @@ std::string WhyToken::GetTypeToString() const
 
 std::string WhyToken::TypeToString() const
 {
-	switch(type)
+	using TType = WhyToken::Type;
+
+	switch(this->type)
 	{
-	case WhyToken::Type::OperPlus:
+	case TType::OperPlus:
 		return "OperPlus";
 		break;
 
-	case WhyToken::Type::OperMinus:
+	case TType::OperMinus:
 		return "OperMinus";
 		break;
 
-	case WhyToken::Type::OperMultiply:
+	case TType::OperMultiply:
 		return "OperMultiply";
 		break;
 
-	case WhyToken::Type::OperDivide:
+	case TType::OperDivide:
 		return "OperDivide";
 		break;
 
-	case WhyToken::Type::Integer:
+	case TType::Integer:
 		return "Integer";
 		break;
 
-	case WhyToken::Type::String:
+	case TType::String:
 		return "String";
+		break;
+	
+	case TType::NewLine:
+		return "NewLine";
+		break;
+
+	case TType::LBracket:
+		return "LBracket";
+		break;
+
+	case TType::RBracket:
+		return "RBracket";
 		break;
 
 	case WhyToken::Type::Undefined: default:

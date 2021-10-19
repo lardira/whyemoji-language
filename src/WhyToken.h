@@ -15,6 +15,9 @@ public:
 		OperDivide,
 		Integer,
 		String,
+		NewLine,
+		LBracket,
+		RBracket,
 	};
 public:
 	WhyToken() = delete;
@@ -26,12 +29,12 @@ public:
 	WhyToken(Type type)
 		: type(type) {}
 
-	char GetValue() const;
+	int GetValue() const;
 	WhyToken::Type GetType() const;
 	std::string GetTypeToString() const;
 private:
 	Type type = Type::Undefined;
-	char value = -1;
+	int value = -1;
 
 	std::string TypeToString() const;
 };
