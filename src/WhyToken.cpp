@@ -16,6 +16,11 @@ WhyToken::Type WhyToken::GetType() const
 	return type;
 }
 
+bool WhyToken::Is(WhyToken::Type type) const
+{
+	return this->GetType() == type;
+}
+
 std::string WhyToken::GetTypeToString() const
 {
 	return WhyToken::TypeToString();

@@ -27,6 +27,7 @@ public:
 
 	int GetValue() const;
 	WhyToken::Type GetType() const;
+	bool Is(WhyToken::Type type) const;
 	std::string GetTypeToString() const;
 private:
 	Type type = Type::Undefined;

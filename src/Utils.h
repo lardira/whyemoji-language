@@ -5,6 +5,7 @@
 #include <sstream>
 #include <string>
 #include <codecvt>
+#include <vector>
 #include "windows.h"
 
 #include "WhyToken.h"
@@ -20,8 +21,11 @@ namespace Utils
 #define UTF8_3B_MASK 0b11110000
 #define UTF8_3B_COUNT 0b11100000
 
-#define UTF8_4B_MASK 0b11111000
+#define UTF8_4B_MASK 0b11111000 
 #define UTF8_4B_COUNT 0b11110000
+
+	const std::string INPUT_PATH = "test/test.why";
+	const std::string OUTPUT_PATH = "test/output.why";
 
 	static int GetUTF8CodePointSize(char c)
 	{
@@ -83,11 +87,11 @@ namespace Utils
 		return input.str();
 	}
 
-	static int OutputToFile(std::string outputFile, std::string output)
+	static int OutputToFile(std::string output, std::string outputFile = OUTPUT_PATH)
 	{
 		bool isSuccess = false;
 
-		std::ofstream ostream(outputFile, (std::ios::binary | std::ios::out));
+		std::ofstream ostream(outputFile, (std::ios::binary | std::ios::out | std::ios_base::app));
 		ostream.imbue(std::locale("en_US.UTF-8"));
 
 		isSuccess = ostream.is_open();
@@ -95,7 +99,7 @@ namespace Utils
 		if (isSuccess)
 			ostream << output;
 
+		ostream.close();
 		return isSuccess;
 	}
-
 }

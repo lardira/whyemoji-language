@@ -2,6 +2,7 @@
 
 #include <vector>
 
+#include "Utils.h"
 #include "WhyToken.h"
 #include "ParserNode.h"
 
@@ -13,9 +14,10 @@ public:
 
 	static void Parse(std::vector<WhyToken>& tokens);
 private:
-	static NumberNode GetFactor();
-	static int GetTerm();
-	static int GetExpression();
+	static ParserNode* GetFactor();
+	static ParserNode* GetTerm();
+	static ParserNode* GetExpression();
+	static int GetNumber();
 
 	static bool TryAdvance();
 private:

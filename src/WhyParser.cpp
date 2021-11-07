@@ -6,39 +6,114 @@ WhyToken WhyParser::currentToken = {WhyToken::Type::Undefined};
 
 void WhyParser::Parse(std::vector<WhyToken>& tokens)
 {
-	Tokens = tokens;
+	//initializing static members
+	Tokens = tokens; //TODO: refactor this
 	currentTokenID = 0;
-	currentToken = Tokens[currentTokenID];
+	currentToken = tokens[0];
 
-	for (int t = 0; t < tokens.size(); t++)
+	int expressionsNumber = 0;
+	for(auto& t : tokens)
 	{
-		switch (currentToken.GetType())
+		if(t.Is(WhyToken::Type::NewLine) || currentTokenID == 0)
 		{
-			case WhyToken::Type::Integer:
-				GetFactor();
-				break;
-			case WhyToken::Type::OperMinus:
-			case WhyToken::Type::OperPlus:
-				//GetOperation();
-				break;
-			default:
-				//TODO: throw an error
-				break;
+			if (currentTokenID != 0)
+				TryAdvance();
+			expressionsNumber++;
+			ParserNode* expression = GetExpression();
+			if(expression != nullptr)
+			Utils::OutputToFile(
+				std::to_string(expressionsNumber)+
+				") " +
+				"Answer: " + 
+				std::to_string(expression->Evaluate()) + "\n");
+			delete expression;
 		}
-	}
+	}	
 }
 
-NumberNode WhyParser::GetFactor()
+int WhyParser::GetNumber()
 {
 	int result = 0;
-	while (currentToken.GetType() == WhyToken::Type::Integer)
+	while (currentToken.Is(WhyToken::Type::Integer))
 	{
 		result = result * 10 + currentToken.GetValue();
 
 		if (TryAdvance() == false)
 			break;
 	}
-	return NumberNode{result};
+	return result;
+}
+
+ParserNode* WhyParser::GetExpression()
+{
+	ParserNode* term = GetTerm();
+
+	while(true)
+	{
+		if (currentToken.Is(WhyToken::Type::OperPlus))
+		{
+			TryAdvance();
+			ParserNode* nextTerm = GetTerm();
+			term = new AddNode{ term, nextTerm };
+
+		}
+		else if (currentToken.Is(WhyToken::Type::OperMinus))
+		{
+			TryAdvance();
+			ParserNode* nextTerm = GetTerm();
+			term = new SubtractNode{ term, nextTerm };
+		}
+		else
+			return term;
+	}
+}
+
+ParserNode* WhyParser::GetTerm()
+{
+	ParserNode* factor = GetFactor();
+	while(true)
+	{
+		if (currentToken.Is(WhyToken::Type::OperMultiply))
+		{
+			TryAdvance();
+			ParserNode* nextFactor = GetFactor();
+			factor = new MultiplicationNode{ factor,  nextFactor };
+		}
+		else if (currentToken.Is(WhyToken::Type::OperDivide))
+		{
+			TryAdvance();
+			ParserNode* nextFactor = GetFactor();
+			factor = new DivisionNode{ factor,  nextFactor };
+		}
+		else
+			return factor;
+	}
+}
+
+ParserNode* WhyParser::GetFactor()
+{
+	if (currentToken.Is(WhyToken::Type::Integer))
+		return new IntegerNode{ GetNumber() };
+
+	ParserNode* expression;
+	if(currentToken.Is(WhyToken::Type::LBracket))
+	{
+		TryAdvance();
+		expression = GetExpression();
+		if (currentToken.Is(WhyToken::Type::RBracket))
+		{
+			TryAdvance();
+			return expression;
+		}
+		else
+			return nullptr; //TODO: throw an error
+	}
+	if(currentToken.Is(WhyToken::Type::OperMinus))
+	{
+		TryAdvance();
+		return new NegateNode{ GetFactor() };
+	}
+	return nullptr;
 }
 
 bool WhyParser::TryAdvance()
