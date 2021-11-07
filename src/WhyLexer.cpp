@@ -6,7 +6,7 @@ void WhyLexer::Tokenize(std::string& inputText)
 {
 	std::vector<std::string> stringTokens = Utils::GetUTF8Strings(inputText);
 
-	for(unsigned int charID = 0; charID < stringTokens.size(); charID++)
+	for (unsigned int charID = 0; charID < stringTokens.size(); charID++)
 	{
 		//Operators
 		if (stringTokens[charID] == u8"➕")

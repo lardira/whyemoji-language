@@ -11,7 +11,7 @@ public:
 class NumberNode : public ParserNode
 {
 public:
-	NumberNode(WhyToken& token);
+	NumberNode(int& numberValue);
 };
 
 class OperationNode : public ParserNode

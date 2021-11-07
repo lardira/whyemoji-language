@@ -12,9 +12,12 @@ int main()
 	const std::string outputFile = "test/output.why";
 
 	std::string inputText = Utils::ReadInputFile(inputFile);
+
 	WhyLexer::Tokenize(inputText);
+	
 	WhyParser::Parse(WhyLexer::Tokens);
 
+	std::cout << "All Tokens in file: \n";
 	Utils::PrintTokens(WhyLexer::Tokens);
 
 	return 0;

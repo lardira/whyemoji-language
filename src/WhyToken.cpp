@@ -1,5 +1,11 @@
 #include "WhyToken.h"
 
+WhyToken::WhyToken(WhyToken::Type type, int value)
+	: type(type), value(value) {}
+
+WhyToken::WhyToken(WhyToken::Type type)
+	: type(type) {}
+
 int WhyToken::GetValue() const
 {
 	return value;

@@ -9,6 +9,23 @@ void WhyParser::Parse(std::vector<WhyToken>& tokens)
 	Tokens = tokens;
 	currentTokenID = 0;
 	currentToken = Tokens[currentTokenID];
+
+	for (int t = 0; t < tokens.size(); t++)
+	{
+		switch (currentToken.GetType())
+		{
+			case WhyToken::Type::Integer:
+				GetFactor();
+				break;
+			case WhyToken::Type::OperMinus:
+			case WhyToken::Type::OperPlus:
+				//GetOperation();
+				break;
+			default:
+				//TODO: throw an error
+				break;
+		}
+	}
 }
 
 NumberNode WhyParser::GetFactor()
@@ -21,18 +38,8 @@ NumberNode WhyParser::GetFactor()
 		if (TryAdvance() == false)
 			break;
 	}
-	return NumberNode{currentToken};
+	return NumberNode{result};
 }
-
-//int WhyParser::GetTerm()
-//{
-	//TODO: LOOK HOW PARSERS WORK
-//}
-//
-//int WhyParser::GetExpression()
-//{
-//
-//}
 
 bool WhyParser::TryAdvance()
 {

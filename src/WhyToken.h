@@ -22,12 +22,8 @@ public:
 public:
 	WhyToken() = delete;
 	~WhyToken() = default;
-	
-	WhyToken(Type type, char value)
-		: type(type), value(value) {}
-
-	WhyToken(Type type)
-		: type(type) {}
+	WhyToken(Type type, int value);
+	WhyToken(Type type);
 
 	int GetValue() const;
 	WhyToken::Type GetType() const;
