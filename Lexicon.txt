@@ -6,7 +6,7 @@ Operators
 ➕ Plus
 ➖ Minus
 ➗ Divide
-✋End Code Line
+NewLine End Code Line
 👉 Declare/Assign
 🖨️ Print to console
 🤝 Elements Linker

@@ -7,6 +7,7 @@ class ParserNode
 {
 public:
 	virtual int Evaluate() = 0;
+	virtual std::string GetString() = 0;
 };
 
 class IntegerNode : public ParserNode
@@ -17,6 +18,7 @@ public:
 	IntegerNode() = default;
 	~IntegerNode() = default;
 	IntegerNode(int value);
+	virtual std::string GetString() override;
 public:
 	int value;
 };
@@ -29,6 +31,7 @@ public:
 	MultiplicationNode(ParserNode * left, ParserNode * right);
 
 	virtual int Evaluate() override;
+	virtual std::string GetString() override;
 private:
 	ParserNode* left;
 	ParserNode* right;
@@ -42,6 +45,7 @@ public:
 	DivisionNode(ParserNode * left, ParserNode * right);
 
 	virtual int Evaluate() override;
+	virtual std::string GetString() override;
 private:
 	ParserNode* left;
 	ParserNode* right;
@@ -55,6 +59,7 @@ public:
 	AddNode(ParserNode* left, ParserNode* right);
 
 	virtual int Evaluate() override;
+	virtual std::string GetString() override;
 private:
 	ParserNode* left;
 	ParserNode* right;
@@ -68,6 +73,7 @@ public:
 	SubtractNode(ParserNode * left, ParserNode * right);
 
 	virtual int Evaluate() override;
+	virtual std::string GetString() override;
 private:
 	ParserNode* left;
 	ParserNode* right;
@@ -81,7 +87,24 @@ public:
 	NegateNode(ParserNode* node);
 
 	virtual int Evaluate() override;
+	virtual std::string GetString() override;
 private:
 	ParserNode* node;
 };
+
+class StringNode : public ParserNode
+{
+public:
+	StringNode() = default;
+	~StringNode() = default;
+	StringNode(std::string text);
+
+	//returns the length of the text value stored
+	virtual int Evaluate() override;
+	//returns the text
+	virtual std::string GetString() override;
+private:
+	std::string text;
+};
+
 

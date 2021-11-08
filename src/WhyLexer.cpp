@@ -42,6 +42,11 @@ void WhyLexer::Tokenize(std::string& inputText)
 			Tokens.push_back({ WhyToken::Type::Integer, 8 });
 		if (stringTokens[charID] == u8"9")
 			Tokens.push_back({ WhyToken::Type::Integer, 9 });
+
+		if (stringTokens[charID] >= u8"a" && stringTokens[charID] <= u8"z")
+			Tokens.push_back({ WhyToken::Type::String, stringTokens[charID] });
+		if (stringTokens[charID] >= u8"A" && stringTokens[charID] <= u8"Z")
+			Tokens.push_back({ WhyToken::Type::String, stringTokens[charID] });
 		//Misc
 		if (stringTokens[charID] == u8"\n")
 			Tokens.push_back({ WhyToken::Type::NewLine });

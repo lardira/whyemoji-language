@@ -3,6 +3,9 @@
 WhyToken::WhyToken(WhyToken::Type type, int value)
 	: type(type), value(value) {}
 
+WhyToken::WhyToken(WhyToken::Type type, std::string value)
+	: type(type), stringValue(value) {}
+
 WhyToken::WhyToken(WhyToken::Type type)
 	: type(type) {}
 
@@ -24,6 +27,11 @@ bool WhyToken::Is(WhyToken::Type type) const
 std::string WhyToken::GetTypeToString() const
 {
 	return WhyToken::TypeToString();
+}
+
+std::string WhyToken::GetString() const
+{
+	return stringValue;
 }
 
 std::string WhyToken::TypeToString() const

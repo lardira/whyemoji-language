@@ -4,6 +4,20 @@ std::vector<WhyToken> WhyParser::Tokens;
 unsigned int WhyParser::currentTokenID;
 WhyToken WhyParser::currentToken = {WhyToken::Type::Undefined};
 
+//DEBUG ONLY
+static void OutputExpression(ParserNode* expression, std::string prefix = 0)
+{
+	if (expression != nullptr)
+	{
+		std::string info =
+			typeid(*expression).name() == typeid(StringNode).name() ?
+			expression->GetString() :
+			expression->GetString() + " = " + std::to_string(expression->Evaluate());
+
+		Utils::OutputToFile((prefix + info + "\n"));
+	}
+}
+
 void WhyParser::Parse(std::vector<WhyToken>& tokens)
 {
 	//initializing static members
@@ -18,14 +32,11 @@ void WhyParser::Parse(std::vector<WhyToken>& tokens)
 		{
 			if (currentTokenID != 0)
 				TryAdvance();
-			expressionsNumber++;
+
 			ParserNode* expression = GetExpression();
-			if(expression != nullptr)
-			Utils::OutputToFile(
-				std::to_string(expressionsNumber)+
-				") " +
-				"Answer: " + 
-				std::to_string(expression->Evaluate()) + "\n");
+			std::string prefix = std::to_string(++expressionsNumber) + ") ";
+			OutputExpression(expression, prefix);
+			
 			delete expression;
 		}
 	}	
@@ -37,7 +48,6 @@ int WhyParser::GetNumber()
 	while (currentToken.Is(WhyToken::Type::Integer))
 	{
 		result = result * 10 + currentToken.GetValue();
-
 		if (TryAdvance() == false)
 			break;
 	}
@@ -94,6 +104,8 @@ ParserNode* WhyParser::GetFactor()
 {
 	if (currentToken.Is(WhyToken::Type::Integer))
 		return new IntegerNode{ GetNumber() };
+	if (currentToken.Is(WhyToken::Type::String))
+		return new StringNode{ GetString() };
 
 	ParserNode* expression;
 	if(currentToken.Is(WhyToken::Type::LBracket))
@@ -106,7 +118,7 @@ ParserNode* WhyParser::GetFactor()
 			return expression;
 		}
 		else
-			return nullptr; //TODO: throw an error
+			return nullptr;
 	}
 	if(currentToken.Is(WhyToken::Type::OperMinus))
 	{
@@ -114,6 +126,18 @@ ParserNode* WhyParser::GetFactor()
 		return new NegateNode{ GetFactor() };
 	}
 	return nullptr;
+}
+
+std::string WhyParser::GetString()
+{
+	std::string result;
+	while (currentToken.Is(WhyToken::Type::String))
+	{
+		result = result + currentToken.GetString();
+		if (TryAdvance() == false)
+			break;
+	}
+	return result;
 }
 
 bool WhyParser::TryAdvance()

@@ -1,6 +1,7 @@
 #pragma once
 
 #include <vector>
+#include <typeinfo>
 
 #include "Utils.h"
 #include "WhyToken.h"
@@ -13,11 +14,13 @@ public:
 	~WhyParser() = default;
 
 	static void Parse(std::vector<WhyToken>& tokens);
+
 private:
 	static ParserNode* GetFactor();
 	static ParserNode* GetTerm();
 	static ParserNode* GetExpression();
 	static int GetNumber();
+	static std::string GetString();
 
 	static bool TryAdvance();
 private:
