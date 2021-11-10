@@ -21,17 +21,18 @@ WhyToken::Type WhyToken::GetType() const
 
 bool WhyToken::Is(WhyToken::Type type) const
 {
-	return this->GetType() == type;
-}
-
-std::string WhyToken::GetTypeToString() const
-{
-	return WhyToken::TypeToString();
+	return (GetType() == type);
 }
 
 std::string WhyToken::GetString() const
 {
 	return stringValue;
+}
+
+//for debug purposes
+std::string WhyToken::GetTypeToString() const
+{
+	return WhyToken::TypeToString();
 }
 
 std::string WhyToken::TypeToString() const

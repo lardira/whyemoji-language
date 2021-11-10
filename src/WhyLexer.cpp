@@ -4,6 +4,8 @@ std::vector<WhyToken> WhyLexer::Tokens;
 
 void WhyLexer::Tokenize(std::string& inputText)
 {
+	ClearTokens();
+
 	std::vector<std::string> stringTokens = Utils::GetUTF8Strings(inputText);
 
 	for (unsigned int charID = 0; charID < stringTokens.size(); charID++)
@@ -54,4 +56,9 @@ void WhyLexer::Tokenize(std::string& inputText)
 			//TODO: Throw error message
 			continue;
 	}
+}
+
+void WhyLexer::ClearTokens()
+{
+	Tokens.clear();
 }

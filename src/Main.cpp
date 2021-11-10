@@ -10,9 +10,9 @@ int main()
 	std::locale::global(std::locale(""));
 
 	std::string inputText = Utils::ReadInputFile(Utils::INPUT_PATH);
-
-	WhyLexer::Tokenize(inputText);
 	
+	WhyLexer::Tokenize(inputText);
+
 	WhyParser::Parse(WhyLexer::Tokens);
 
 	/*std::cout << "All Tokens in file: \n";

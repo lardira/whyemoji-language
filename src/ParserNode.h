@@ -2,13 +2,17 @@
 
 #include "WhyToken.h"
 
-//TODO::make it unique ptrs
 class ParserNode
 {
 public:
-	virtual int Evaluate() = 0;
-	virtual std::string GetString() = 0;
+	//not pure virtuals cuz of the shared ptrs
+	virtual int Evaluate();
+	virtual std::string GetString();
 };
+
+template<typename NodeType>
+using SharedPtr = std::shared_ptr<NodeType>;
+using SharedNodePtr = SharedPtr<ParserNode>;
 
 class IntegerNode : public ParserNode
 {
@@ -28,13 +32,13 @@ class MultiplicationNode : public ParserNode
 public:
 	MultiplicationNode() = default;
 	~MultiplicationNode() = default;
-	MultiplicationNode(ParserNode * left, ParserNode * right);
+	MultiplicationNode(SharedNodePtr left, SharedNodePtr right);
 
 	virtual int Evaluate() override;
 	virtual std::string GetString() override;
 private:
-	ParserNode* left;
-	ParserNode* right;
+	SharedNodePtr left;
+	SharedNodePtr right;
 };
 
 class DivisionNode : public ParserNode
@@ -42,13 +46,13 @@ class DivisionNode : public ParserNode
 public:
 	DivisionNode() = default;
 	~DivisionNode() = default;
-	DivisionNode(ParserNode * left, ParserNode * right);
+	DivisionNode(SharedNodePtr left, SharedNodePtr right);
 
 	virtual int Evaluate() override;
 	virtual std::string GetString() override;
 private:
-	ParserNode* left;
-	ParserNode* right;
+	SharedNodePtr left;
+	SharedNodePtr right;
 };
 
 class AddNode : public ParserNode
@@ -56,13 +60,13 @@ class AddNode : public ParserNode
 public:
 	AddNode() = default;
 	~AddNode() = default;
-	AddNode(ParserNode* left, ParserNode* right);
+	AddNode(SharedNodePtr left, SharedNodePtr right);
 
 	virtual int Evaluate() override;
 	virtual std::string GetString() override;
 private:
-	ParserNode* left;
-	ParserNode* right;
+	SharedNodePtr left;
+	SharedNodePtr right;
 };
 
 class SubtractNode : public ParserNode
@@ -70,13 +74,13 @@ class SubtractNode : public ParserNode
 public:
 	SubtractNode() = default;
 	~SubtractNode() = default;
-	SubtractNode(ParserNode * left, ParserNode * right);
+	SubtractNode(SharedNodePtr left, SharedNodePtr right);
 
 	virtual int Evaluate() override;
 	virtual std::string GetString() override;
 private:
-	ParserNode* left;
-	ParserNode* right;
+	SharedNodePtr left;
+	SharedNodePtr right;
 };
 
 class NegateNode : public ParserNode
@@ -84,12 +88,12 @@ class NegateNode : public ParserNode
 public:
 	NegateNode() = default;
 	~NegateNode() = default;
-	NegateNode(ParserNode* node);
+	NegateNode(SharedNodePtr node);
 
 	virtual int Evaluate() override;
 	virtual std::string GetString() override;
 private:
-	ParserNode* node;
+	SharedNodePtr node;
 };
 
 class StringNode : public ParserNode
@@ -106,5 +110,3 @@ public:
 private:
 	std::string text;
 };
-
-

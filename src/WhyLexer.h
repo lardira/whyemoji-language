@@ -13,7 +13,8 @@ public:
 	WhyLexer() = default;
 	~WhyLexer() = default;
 
-	static void Tokenize(std::string& inputText);
 	static std::vector<WhyToken> Tokens;
+	static void Tokenize(std::string& inputText);
+	static void ClearTokens();
 };
 

@@ -5,14 +5,14 @@ unsigned int WhyParser::currentTokenID;
 WhyToken WhyParser::currentToken = {WhyToken::Type::Undefined};
 
 //DEBUG ONLY
-static void OutputExpression(ParserNode* expression, std::string prefix = 0)
+static void OutputExpression(SharedNodePtr& expression, std::string prefix = 0)
 {
 	if (expression != nullptr)
 	{
 		std::string info =
 			typeid(*expression).name() == typeid(StringNode).name() ?
-			expression->GetString() :
-			expression->GetString() + " = " + std::to_string(expression->Evaluate());
+			expression.get()->GetString() :
+			expression.get()->GetString() + " = " + std::to_string(expression.get()->Evaluate());
 
 		Utils::OutputToFile((prefix + info + "\n"));
 	}
@@ -26,88 +26,77 @@ void WhyParser::Parse(std::vector<WhyToken>& tokens)
 	currentToken = tokens[0];
 
 	int expressionsNumber = 0;
-	for(auto& t : tokens)
+	for(auto& token : tokens)
 	{
-		if(t.Is(WhyToken::Type::NewLine) || currentTokenID == 0)
+		if(token.Is(WhyToken::Type::NewLine) || currentTokenID == 0)
 		{
 			if (currentTokenID != 0)
 				TryAdvance();
 
-			ParserNode* expression = GetExpression();
+			SharedNodePtr expression = GetExpression();
+
 			std::string prefix = std::to_string(++expressionsNumber) + ") ";
 			OutputExpression(expression, prefix);
-			
-			delete expression;
 		}
 	}	
 }
 
-int WhyParser::GetNumber()
+SharedNodePtr WhyParser::GetExpression()
 {
-	int result = 0;
-	while (currentToken.Is(WhyToken::Type::Integer))
-	{
-		result = result * 10 + currentToken.GetValue();
-		if (TryAdvance() == false)
-			break;
-	}
-	return result;
-}
-
-ParserNode* WhyParser::GetExpression()
-{
-	ParserNode* term = GetTerm();
+	SharedNodePtr term = GetTerm();
 
 	while(true)
 	{
 		if (currentToken.Is(WhyToken::Type::OperPlus))
 		{
 			TryAdvance();
-			ParserNode* nextTerm = GetTerm();
-			term = new AddNode{ term, nextTerm };
+			auto nextTerm = GetTerm();
+			term = std::make_shared<AddNode>(term, nextTerm);
 
 		}
 		else if (currentToken.Is(WhyToken::Type::OperMinus))
 		{
 			TryAdvance();
-			ParserNode* nextTerm = GetTerm();
-			term = new SubtractNode{ term, nextTerm };
+			auto nextTerm = GetTerm();
+			term = std::make_shared<SubtractNode>(term, nextTerm);
 		}
-		else
-			return term;
+		else return term;
 	}
 }
 
-ParserNode* WhyParser::GetTerm()
+SharedNodePtr WhyParser::GetTerm()
 {
-	ParserNode* factor = GetFactor();
+	SharedNodePtr factor = GetFactor();
+
 	while(true)
 	{
 		if (currentToken.Is(WhyToken::Type::OperMultiply))
 		{
 			TryAdvance();
-			ParserNode* nextFactor = GetFactor();
-			factor = new MultiplicationNode{ factor,  nextFactor };
+			auto nextFactor = GetFactor();
+			factor = std::make_shared<MultiplicationNode>(factor,  nextFactor);
 		}
 		else if (currentToken.Is(WhyToken::Type::OperDivide))
 		{
 			TryAdvance();
-			ParserNode* nextFactor = GetFactor();
-			factor = new DivisionNode{ factor,  nextFactor };
+			auto nextFactor = GetFactor();
+			factor = std::make_shared<DivisionNode>(factor, nextFactor);
 		}
-		else
-			return factor;
+		else return factor;
 	}
 }
 
-ParserNode* WhyParser::GetFactor()
+SharedNodePtr WhyParser::GetFactor()
 {
+	//if factor is just value
 	if (currentToken.Is(WhyToken::Type::Integer))
-		return new IntegerNode{ GetNumber() };
+		return std::make_shared<IntegerNode>(GetNumber());
 	if (currentToken.Is(WhyToken::Type::String))
-		return new StringNode{ GetString() };
+		return std::make_shared<StringNode>(GetString());
 
-	ParserNode* expression;
+	//otherwise proceeds receiving 
+	SharedNodePtr expression;
+
 	if(currentToken.Is(WhyToken::Type::LBracket))
 	{
 		TryAdvance();
@@ -117,13 +106,12 @@ ParserNode* WhyParser::GetFactor()
 			TryAdvance();
 			return expression;
 		}
-		else
-			return nullptr;
+		else return nullptr;
 	}
 	if(currentToken.Is(WhyToken::Type::OperMinus))
 	{
 		TryAdvance();
-		return new NegateNode{ GetFactor() };
+		return GetFactor();
 	}
 	return nullptr;
 }
@@ -134,6 +122,18 @@ std::string WhyParser::GetString()
 	while (currentToken.Is(WhyToken::Type::String))
 	{
 		result = result + currentToken.GetString();
+		if (TryAdvance() == false)
+			break;
+	}
+	return result;
+}
+
+int WhyParser::GetNumber()
+{
+	int result = 0;
+	while (currentToken.Is(WhyToken::Type::Integer))
+	{
+		result = result * 10 + currentToken.GetValue();
 		if (TryAdvance() == false)
 			break;
 	}

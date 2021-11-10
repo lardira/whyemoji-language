@@ -2,6 +2,7 @@
 
 #include <vector>
 #include <typeinfo>
+#include <memory>
 
 #include "Utils.h"
 #include "WhyToken.h"
@@ -16,9 +17,9 @@ public:
 	static void Parse(std::vector<WhyToken>& tokens);
 
 private:
-	static ParserNode* GetFactor();
-	static ParserNode* GetTerm();
-	static ParserNode* GetExpression();
+	static SharedNodePtr GetFactor();
+	static SharedNodePtr GetTerm();
+	static SharedNodePtr GetExpression();
 	static int GetNumber();
 	static std::string GetString();
 
@@ -27,5 +28,7 @@ private:
 	static std::vector<WhyToken> Tokens;
 	static WhyToken currentToken;
 	static unsigned int currentTokenID;
+
+
 };
 

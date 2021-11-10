@@ -45,8 +45,8 @@ namespace Utils
 	{
 		for(auto& token : tokens)
 		{
-			std::string tokenValue = 
-				token.GetValue() == -1 ? std::string() : std::to_string(token.GetValue());
+			//clearing value for output
+			std::string tokenValue = token.GetValue() == -1 ? std::string() : std::to_string(token.GetValue());
 			std::cout << "{ " << token.GetTypeToString() << " val: " << tokenValue << " }\n";
 		}
 	}
