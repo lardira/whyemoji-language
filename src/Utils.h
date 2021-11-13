@@ -9,6 +9,7 @@
 #include "windows.h"
 
 #include "WhyToken.h"
+#include "ParserNode.h"
 
 namespace Utils
 {
@@ -101,5 +102,60 @@ namespace Utils
 
 		ostream.close();
 		return isSuccess;
+	}
+
+	template<typename T>
+	static bool CompareNodeTypeTo(SharedNodePtr nodeTypeOfToCompare)
+	{
+		if (nodeTypeOfToCompare.get() == nullptr)
+			return false;
+
+		std::string a = typeid(T).name();
+		std::string b = typeid(*nodeTypeOfToCompare).name();
+		return (a == b);
+	}
+
+	static void PrintToFile(SharedNodePtr expression, std::string prefix = std::string())
+	{
+		if (expression != nullptr)
+		{
+			std::string info;
+			if(CompareNodeTypeTo<StringNode>(expression))
+			{
+				info = expression.get()->GetString();
+			}
+			else if (CompareNodeTypeTo<VariableNode>(expression))
+			{
+				auto variablePtr = ((VariableNode*)expression.get());
+				PrintToFile(variablePtr->GetValueNode(), prefix);
+				return;
+			}
+			else 
+				info = std::to_string(expression.get()->Evaluate());
+
+			Utils::OutputToFile((prefix + info + "\n"));
+		}
+	}
+
+	static void Print(SharedNodePtr expression, std::string prefix = std::string())
+	{
+		if (expression != nullptr)
+		{
+			std::string info;
+			if (CompareNodeTypeTo<StringNode>(expression))
+			{
+				info = expression.get()->GetString();
+			}
+			else if (CompareNodeTypeTo<VariableNode>(expression))
+			{
+				auto variablePtr = ((VariableNode*)expression.get());
+				Print(variablePtr->GetValueNode(), prefix);
+				return;
+			}
+			else
+				info = std::to_string(expression.get()->Evaluate());
+
+			std::cout << prefix << info << '\n';
+		}
 	}
 }

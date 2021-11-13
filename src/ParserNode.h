@@ -19,7 +19,7 @@ class IntegerNode : public ParserNode
 public:
 	virtual int Evaluate() override;
 
-	IntegerNode() = default;
+	IntegerNode() = delete;
 	~IntegerNode() = default;
 	IntegerNode(int value);
 	virtual std::string GetString() override;
@@ -30,7 +30,7 @@ public:
 class MultiplicationNode : public ParserNode
 {
 public:
-	MultiplicationNode() = default;
+	MultiplicationNode() = delete;
 	~MultiplicationNode() = default;
 	MultiplicationNode(SharedNodePtr left, SharedNodePtr right);
 
@@ -44,7 +44,7 @@ private:
 class DivisionNode : public ParserNode
 {
 public:
-	DivisionNode() = default;
+	DivisionNode() = delete;
 	~DivisionNode() = default;
 	DivisionNode(SharedNodePtr left, SharedNodePtr right);
 
@@ -58,7 +58,7 @@ private:
 class AddNode : public ParserNode
 {
 public:
-	AddNode() = default;
+	AddNode() = delete;
 	~AddNode() = default;
 	AddNode(SharedNodePtr left, SharedNodePtr right);
 
@@ -72,7 +72,7 @@ private:
 class SubtractNode : public ParserNode
 {
 public:
-	SubtractNode() = default;
+	SubtractNode() = delete;
 	~SubtractNode() = default;
 	SubtractNode(SharedNodePtr left, SharedNodePtr right);
 
@@ -86,7 +86,7 @@ private:
 class NegateNode : public ParserNode
 {
 public:
-	NegateNode() = default;
+	NegateNode() = delete;
 	~NegateNode() = default;
 	NegateNode(SharedNodePtr node);
 
@@ -96,10 +96,27 @@ private:
 	SharedNodePtr node;
 };
 
+class VariableNode : public ParserNode
+{
+public:
+	VariableNode() = delete;
+	~VariableNode() = default;
+	VariableNode(SharedNodePtr assignedNode, std::string name);
+
+	virtual int Evaluate() override;
+	virtual std::string GetString() override;
+	std::string GetName();
+	SharedNodePtr GetValueNode() const;
+	void SetAssignedNode(SharedNodePtr newValue);
+private:
+	SharedNodePtr assignedNode;
+	std::string name;
+};
+
 class StringNode : public ParserNode
 {
 public:
-	StringNode() = default;
+	StringNode() = delete;
 	~StringNode() = default;
 	StringNode(std::string text);
 
@@ -109,4 +126,39 @@ public:
 	virtual std::string GetString() override;
 private:
 	std::string text;
+};
+
+class PrintNode : public ParserNode
+{
+public:
+	PrintNode() = delete;
+	~PrintNode() = default;
+	PrintNode(SharedNodePtr whatToPrint);
+
+	//returns the length of the text value stored
+	virtual int Evaluate();
+	//returns the text
+	virtual std::string GetString() override;
+	void SetAssignedNode(SharedNodePtr node);
+	SharedNodePtr GetValueNode() const;
+private:
+	SharedNodePtr whatToPrint;
+};
+
+class FileNode : public ParserNode
+{
+public:
+	FileNode() = delete;
+	~FileNode() = default;
+	FileNode(SharedNodePtr node);
+	FileNode(SharedNodePtr node, std::string filePath);
+
+	//returns the length of the text value stored
+	virtual int Evaluate();
+	//returns the text
+	virtual std::string GetString() override;
+	SharedNodePtr GetValueNode() const;
+private:
+	std::string filePath = "output.txt";
+	SharedNodePtr node;
 };

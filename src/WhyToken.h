@@ -18,6 +18,10 @@ public:
 		NewLine,
 		LBracket,
 		RBracket,
+		Variable,
+		Print,
+		Assign,
+		File,
 	};
 public:
 	WhyToken() = delete;

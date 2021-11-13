@@ -100,3 +100,83 @@ std::string ParserNode::GetString()
 {
 	return std::string();
 }
+
+VariableNode::VariableNode(SharedNodePtr assignedNode, std::string name)
+	: assignedNode(assignedNode), name(name)
+{
+}
+
+int VariableNode::Evaluate()
+{
+	return assignedNode.get()->Evaluate();
+}
+
+std::string VariableNode::GetString()
+{
+	return std::to_string(assignedNode.get()->Evaluate());
+}
+
+std::string VariableNode::GetName()
+{
+	return name;
+}
+
+SharedNodePtr VariableNode::GetValueNode() const
+{
+	return assignedNode;
+}
+
+void VariableNode::SetAssignedNode(SharedNodePtr newValue)
+{
+	assignedNode = newValue;
+}
+
+PrintNode::PrintNode(SharedNodePtr whatToPrint)
+	: whatToPrint(whatToPrint)
+{
+}
+
+int PrintNode::Evaluate()
+{
+	return 0;
+}
+
+std::string PrintNode::GetString()
+{
+	return "Print " + whatToPrint->GetString();
+}
+
+void PrintNode::SetAssignedNode(SharedNodePtr node)
+{
+	whatToPrint = node;
+}
+
+SharedNodePtr PrintNode::GetValueNode() const
+{
+	return whatToPrint;
+}
+
+FileNode::FileNode(SharedNodePtr node)
+	: node(node)
+{
+}
+
+FileNode::FileNode(SharedNodePtr node, std::string filePath)
+	: node(node), filePath(filePath)
+{
+}
+
+int FileNode::Evaluate()
+{
+	return 0;
+}
+
+std::string FileNode::GetString()
+{
+	return "File: " + filePath ;
+}
+
+SharedNodePtr FileNode::GetValueNode() const
+{
+	return node;
+}

@@ -1,22 +1,11 @@
 #include "WhyParser.h"
 
+std::vector<SharedNodePtr> WhyParser::parserNodeTree;
+std::map<std::string, SharedNodePtr> WhyParser::variables;
+
 std::vector<WhyToken> WhyParser::Tokens;
 unsigned int WhyParser::currentTokenID;
 WhyToken WhyParser::currentToken = {WhyToken::Type::Undefined};
-
-//DEBUG ONLY
-static void OutputExpression(SharedNodePtr& expression, std::string prefix = 0)
-{
-	if (expression != nullptr)
-	{
-		std::string info =
-			typeid(*expression).name() == typeid(StringNode).name() ?
-			expression.get()->GetString() :
-			expression.get()->GetString() + " = " + std::to_string(expression.get()->Evaluate());
-
-		Utils::OutputToFile((prefix + info + "\n"));
-	}
-}
 
 void WhyParser::Parse(std::vector<WhyToken>& tokens)
 {
@@ -33,10 +22,56 @@ void WhyParser::Parse(std::vector<WhyToken>& tokens)
 			if (currentTokenID != 0)
 				TryAdvance();
 
-			SharedNodePtr expression = GetExpression();
-
-			std::string prefix = std::to_string(++expressionsNumber) + ") ";
-			OutputExpression(expression, prefix);
+			if (currentToken.Is(WhyToken::Type::Variable))
+			{
+				std::string currentVarName = currentToken.GetString();
+				//get what's being assigned
+				TryAdvance();
+				if (currentToken.Is(WhyToken::Type::Assign))
+				{
+					TryAdvance();
+					//if this is the first encounter the variable should be stored
+					auto varIterator = variables.find(currentVarName);
+					if (varIterator == variables.end())
+					{
+						SharedNodePtr newNode = std::make_shared<VariableNode>(GetExpression(), currentVarName);
+						auto&& newVariable = std::make_pair(currentVarName, newNode);
+						variables.emplace(newVariable);
+						parserNodeTree.push_back(newNode);
+					}
+					else
+					{
+						VariableNode* var = ((VariableNode*)varIterator->second.get());
+						var->SetAssignedNode(GetExpression());
+						parserNodeTree.push_back(varIterator->second);
+					}
+				}
+				else
+				{
+					//todo: error
+					continue;
+				}
+			}
+			else if(currentToken.Is(WhyToken::Type::Print))
+			{
+				SharedNodePtr printNode = std::make_shared<PrintNode>(nullptr);
+				PrintNode* printNodePtr = ((PrintNode*)printNode.get());
+				TryAdvance();
+				if(currentToken.Is(WhyToken::Type::File))
+				{
+					TryAdvance();
+					printNodePtr->SetAssignedNode(std::make_shared<FileNode>(GetExpression()));
+				}
+				else 
+				{
+					printNodePtr->SetAssignedNode(GetExpression());
+				}
+				parserNodeTree.push_back(printNode);
+			}
+			else
+			{
+				//todo: throw an error
+			}
 		}
 	}	
 }
@@ -88,6 +123,24 @@ SharedNodePtr WhyParser::GetTerm()
 
 SharedNodePtr WhyParser::GetFactor()
 {
+	//if a variable exists then it's value has to be used
+	//otherwise there is an error (uninitialized variable)
+	if(currentToken.Is(WhyToken::Type::Variable))
+	{
+		auto varName = currentToken.GetString();
+		auto varIterator = variables.find(varName);
+		if(varIterator != variables.end())
+		{
+			VariableNode* var = ((VariableNode*)varIterator->second.get());
+			TryAdvance();
+			return var->GetValueNode();
+		}
+		else
+		{
+			//todo:throw an error
+		}
+	}
+
 	//if factor is just value
 	if (currentToken.Is(WhyToken::Type::Integer))
 		return std::make_shared<IntegerNode>(GetNumber());

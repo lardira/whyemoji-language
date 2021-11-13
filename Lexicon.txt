@@ -8,19 +8,16 @@ Operators
 ➗ Divide
 NewLine End Code Line
 👉 Declare/Assign
-🖨️ Print to console
-🤝 Elements Linker
+🖨 Print to console
+🖨💾 Print to file
 〖〗Parentheses
 
 Objects
 🙂...🤔 Variable names
-🚌 Array
 
 ❓ if
 ✔️ if true
 ❌ if false
-Loops
-🔁 Repeat Button
 
 Types
 🔢 Integer
@@ -35,7 +32,5 @@ Digits
 7️⃣ Digit Seven
 8️⃣ Digit Eight
 9️⃣ Digit Nine
-
-🔤 String
 
 Misc

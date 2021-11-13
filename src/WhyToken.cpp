@@ -77,6 +77,22 @@ std::string WhyToken::TypeToString() const
 		return "RBracket";
 		break;
 
+	case TType::Assign:
+		return "Assign";
+		break;
+
+	case TType::Variable:
+		return "Variable";
+		break;
+
+	case TType::Print:
+		return "Print";
+		break;
+
+	case TType::File:
+		return "File";
+		break;
+
 	case WhyToken::Type::Undefined: default:
 		return "Undefined";
 		break;
