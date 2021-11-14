@@ -113,11 +113,6 @@ int VariableNode::Evaluate()
 
 std::string VariableNode::GetString()
 {
-	return std::to_string(assignedNode.get()->Evaluate());
-}
-
-std::string VariableNode::GetName()
-{
 	return name;
 }
 

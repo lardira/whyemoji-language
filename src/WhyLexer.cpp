@@ -1,9 +1,20 @@
 ﻿#include "WhyLexer.h"
 
 std::vector<WhyToken> WhyLexer::Tokens;
+std::vector<std::string> WhyLexer::possibleVariables = {
+u8"😀", u8"😉", u8"😁", u8"😆", u8"😅", u8"😃", u8"😇", u8"🙃", u8"😄", u8"🙂", u8"😊", u8"🤣", u8"😂",
+u8"🤩", u8"😘", u8"😗", u8"😍", u8"☺", u8"😙", u8"🥰", u8"😚", u8"🧐" ,u8"😎", u8"🤓" ,u8"🥳", u8"🤔",
+u8"🤑", u8"🤪", u8"😜", u8"😛", u8"😋", u8"🤠",u8"🤢",u8"🤮",u8"🤕",u8"🥵",u8"🤒",u8"😵",u8"🥴",
+u8"🤯", u8"😷", u8"🤧", u8"🥶", u8"🤤", u8"😴", u8"😪", u8"😔", u8"😌", u8"🤥", u8"🤐", u8"🙄", u8"😒",
+u8"😑", u8"😏", u8"😬", u8"🤨", u8"😶", u8"😐", u8"🤫", u8"🤗", u8"🤭", u8"🤔", u8"🤑", u8"😝", u8"🤪",
+u8"😜", u8"😛", u8"😋", u8"👽", u8"🤖", u8"🤡", u8"💩", u8"😠", u8"🤬", u8"👿", u8"💀", u8"😡", u8"😈",
+u8"😤", u8"☠"
+};
+
 
 void WhyLexer::Tokenize(std::string& inputText)
 {
+	//should be cleared before reading a new file 
 	ClearTokens();
 
 	std::vector<std::string> stringTokens = Utils::GetUTF8Strings(inputText);
@@ -16,12 +27,8 @@ void WhyLexer::Tokenize(std::string& inputText)
 		
 		//unless a token after all checks above is but an empty space 
 		//it should be considered an error
-		if (token == " ")
-			continue; 
-		else
-		{
-			//TODO::throw an error
-		}
+		if (token != " ")
+			continue; //TODO::throw an error
 	}
 }
 
@@ -45,27 +52,9 @@ void WhyLexer::TryGetOperator(const std::string& stringToken)
 
 void WhyLexer::TryGetObject(const std::string& stringToken)
 {
-	/*if (stringToken == u8"0")
-		Tokens.push_back({ WhyToken::Type::Integer, 0 });
-	if (stringToken == u8"1")
-		Tokens.push_back({ WhyToken::Type::Integer, 1 });
-	if (stringToken == u8"2")
-		Tokens.push_back({ WhyToken::Type::Integer, 2 });
-	if (stringToken == u8"3")
-		Tokens.push_back({ WhyToken::Type::Integer, 3 });
-	if (stringToken == u8"4")
-		Tokens.push_back({ WhyToken::Type::Integer, 4 });
-	if (stringToken == u8"5")
-		Tokens.push_back({ WhyToken::Type::Integer, 5 });
-	if (stringToken == u8"6")
-		Tokens.push_back({ WhyToken::Type::Integer, 6 });
-	if (stringToken == u8"7")
-		Tokens.push_back({ WhyToken::Type::Integer, 7 });
-	if (stringToken == u8"8")
-		Tokens.push_back({ WhyToken::Type::Integer, 8 });
-	if (stringToken == u8"9")
-		Tokens.push_back({ WhyToken::Type::Integer, 9 });*/
 	int tempTryInt;
+	//if string to int throws an exception then it's not int
+	//thus other token types should be considered
 	try 
 	{
 		tempTryInt = std::stoi(stringToken);
@@ -78,10 +67,12 @@ void WhyLexer::TryGetObject(const std::string& stringToken)
 			Tokens.push_back({ WhyToken::Type::String, stringToken });
 		else if (stringToken >= u8"A" && stringToken <= u8"Z")
 			Tokens.push_back({ WhyToken::Type::String, stringToken });
-		else if (stringToken == u8"🤔")
-			Tokens.push_back({ WhyToken::Type::Variable, stringToken});
-		else if (stringToken == u8"🙂")
-			Tokens.push_back({ WhyToken::Type::Variable, stringToken});
+		else 
+		{
+			auto result = std::find(possibleVariables.begin(), possibleVariables.end(), stringToken);
+			if (result != possibleVariables.end())
+				Tokens.push_back({ WhyToken::Type::Variable, stringToken });
+		}
 	}
 }
 

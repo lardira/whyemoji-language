@@ -2,8 +2,8 @@
 
 #include "ParserNode.h"
 #include "WhyParser.h"
-#include "WhyVariable.h"
 #include "Utils.h"
+#include "FileManager.h"
 
 class WhyEvaluator
 {
@@ -12,7 +12,6 @@ public:
 	~WhyEvaluator() = default;
 
 	static void Evaluate(std::vector<SharedNodePtr> parserNodeTree);
-private:
-	static std::vector<WhyVariable<int>> integers;
+	static void Print(SharedNodePtr& expression);
 };
 

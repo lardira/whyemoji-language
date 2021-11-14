@@ -25,9 +25,6 @@ namespace Utils
 #define UTF8_4B_MASK 0b11111000 
 #define UTF8_4B_COUNT 0b11110000
 
-	const std::string INPUT_PATH = "test/test.why";
-	const std::string OUTPUT_PATH = "test/output.why";
-
 	static int GetUTF8CodePointSize(char c)
 	{
 		if ((c & UTF8_1B_MASK) == UTF8_1B_COUNT) 
@@ -40,16 +37,6 @@ namespace Utils
 			return 4;
 		return 0;
 		// TODO: what should happen if a byte with prefix 0b10xxxxxx is passed?
-	}
-
-	static void PrintTokens(std::vector<WhyToken>& tokens)
-	{
-		for(auto& token : tokens)
-		{
-			//clearing value for output
-			std::string tokenValue = token.GetValue() == -1 ? std::string() : std::to_string(token.GetValue());
-			std::cout << "{ " << token.GetTypeToString() << " val: " << tokenValue << " }\n";
-		}
 	}
 
 	static std::vector<std::string> GetUTF8Strings(std::string string)
@@ -73,35 +60,14 @@ namespace Utils
 		return utf8strings;
 	}
 
-	static std::string ReadInputFile(std::string inputFile)
+	static void PrintTokens(std::vector<WhyToken>& tokens)
 	{
-
-		std::ifstream istream(inputFile, (std::ios::binary | std::ios::in));
-
-		if (istream.is_open() == false)
-			return std::string();
-
-		std::stringstream input;
-		input << istream.rdbuf();
-
-		istream.close();
-		return input.str();
-	}
-
-	static int OutputToFile(std::string output, std::string outputFile = OUTPUT_PATH)
-	{
-		bool isSuccess = false;
-
-		std::ofstream ostream(outputFile, (std::ios::binary | std::ios::out | std::ios_base::app));
-		ostream.imbue(std::locale("en_US.UTF-8"));
-
-		isSuccess = ostream.is_open();
-
-		if (isSuccess)
-			ostream << output;
-
-		ostream.close();
-		return isSuccess;
+		for(auto& token : tokens)
+		{
+			//clearing value for output
+			std::string tokenValue = token.GetValue() == -1 ? std::string() : std::to_string(token.GetValue());
+			std::cout << "{ " << token.GetTypeToString() << " val: " << tokenValue << " }\n";
+		}
 	}
 
 	template<typename T>
@@ -110,31 +76,10 @@ namespace Utils
 		if (nodeTypeOfToCompare.get() == nullptr)
 			return false;
 
-		std::string a = typeid(T).name();
-		std::string b = typeid(*nodeTypeOfToCompare).name();
+		//using just right values cuz otherwise the strings are going to be allocated on the heap
+		std::string&& a = typeid(T).name();
+		std::string&& b = typeid(*nodeTypeOfToCompare).name();
 		return (a == b);
-	}
-
-	static void PrintToFile(SharedNodePtr expression, std::string prefix = std::string())
-	{
-		if (expression != nullptr)
-		{
-			std::string info;
-			if(CompareNodeTypeTo<StringNode>(expression))
-			{
-				info = expression.get()->GetString();
-			}
-			else if (CompareNodeTypeTo<VariableNode>(expression))
-			{
-				auto variablePtr = ((VariableNode*)expression.get());
-				PrintToFile(variablePtr->GetValueNode(), prefix);
-				return;
-			}
-			else 
-				info = std::to_string(expression.get()->Evaluate());
-
-			Utils::OutputToFile((prefix + info + "\n"));
-		}
 	}
 
 	static void Print(SharedNodePtr expression, std::string prefix = std::string())

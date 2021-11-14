@@ -4,8 +4,8 @@
 #include <vector>
 #include <unordered_map>
 
-#include "Utils.h"
 #include "WhyToken.h"
+#include "Utils.h"
 
 class WhyLexer
 {
@@ -19,5 +19,8 @@ public:
 	static void TryGetObject(const std::string& stringToken);
 	static void TryGetOtherTokens(const std::string& stringToken);
 	static void ClearTokens();
+
+private:
+	static std::vector<std::string> possibleVariables;
 };
 

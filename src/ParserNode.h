@@ -105,7 +105,6 @@ public:
 
 	virtual int Evaluate() override;
 	virtual std::string GetString() override;
-	std::string GetName();
 	SharedNodePtr GetValueNode() const;
 	void SetAssignedNode(SharedNodePtr newValue);
 private:

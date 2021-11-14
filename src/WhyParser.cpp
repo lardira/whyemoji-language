@@ -4,20 +4,19 @@ std::vector<SharedNodePtr> WhyParser::parserNodeTree;
 std::map<std::string, SharedNodePtr> WhyParser::variables;
 
 std::vector<WhyToken> WhyParser::Tokens;
-unsigned int WhyParser::currentTokenID;
+int WhyParser::currentTokenID;
 WhyToken WhyParser::currentToken = {WhyToken::Type::Undefined};
 
 void WhyParser::Parse(std::vector<WhyToken>& tokens)
 {
 	//initializing static members
-	Tokens = tokens; //TODO: refactor this
+	WhyParser::Tokens = std::move(tokens);
 	currentTokenID = 0;
-	currentToken = tokens[0];
+	currentToken = Tokens[0];
 
-	int expressionsNumber = 0;
-	for(auto& token : tokens)
+	for(auto& token : Tokens)
 	{
-		if(token.Is(WhyToken::Type::NewLine) || currentTokenID == 0)
+		if (token.Is(WhyToken::Type::NewLine) || currentTokenID == 0)
 		{
 			if (currentTokenID != 0)
 				TryAdvance();
@@ -28,49 +27,21 @@ void WhyParser::Parse(std::vector<WhyToken>& tokens)
 				//get what's being assigned
 				TryAdvance();
 				if (currentToken.Is(WhyToken::Type::Assign))
-				{
-					TryAdvance();
-					//if this is the first encounter the variable should be stored
-					auto varIterator = variables.find(currentVarName);
-					if (varIterator == variables.end())
-					{
-						SharedNodePtr newNode = std::make_shared<VariableNode>(GetExpression(), currentVarName);
-						auto&& newVariable = std::make_pair(currentVarName, newNode);
-						variables.emplace(newVariable);
-						parserNodeTree.push_back(newNode);
-					}
-					else
-					{
-						VariableNode* var = ((VariableNode*)varIterator->second.get());
-						var->SetAssignedNode(GetExpression());
-						parserNodeTree.push_back(varIterator->second);
-					}
-				}
+					AssignToVariable(currentVarName);
 				else
 				{
-					//todo: error
-					continue;
+					std::cout << "Error while assigning" << '\n';
+					continue; //todo: error
 				}
 			}
 			else if(currentToken.Is(WhyToken::Type::Print))
 			{
-				SharedNodePtr printNode = std::make_shared<PrintNode>(nullptr);
-				PrintNode* printNodePtr = ((PrintNode*)printNode.get());
-				TryAdvance();
-				if(currentToken.Is(WhyToken::Type::File))
-				{
-					TryAdvance();
-					printNodePtr->SetAssignedNode(std::make_shared<FileNode>(GetExpression()));
-				}
-				else 
-				{
-					printNodePtr->SetAssignedNode(GetExpression());
-				}
-				parserNodeTree.push_back(printNode);
+				MakePrintNode();
 			}
-			else
+			else if(!currentToken.Is(WhyToken::Type::NewLine))
 			{
 				//todo: throw an error
+				std::cout << "No such object like " << currentToken.GetTypeToString() << " exists" << '\n';
 			}
 		}
 	}	
@@ -137,14 +108,15 @@ SharedNodePtr WhyParser::GetFactor()
 		}
 		else
 		{
+			std::cout << "Variable encountered was not initialized" << '\n';
 			//todo:throw an error
 		}
 	}
 
-	//if factor is just value
+	//if factor is just a value
 	if (currentToken.Is(WhyToken::Type::Integer))
 		return std::make_shared<IntegerNode>(GetNumber());
-	if (currentToken.Is(WhyToken::Type::String))
+	else if (currentToken.Is(WhyToken::Type::String))
 		return std::make_shared<StringNode>(GetString());
 
 	//otherwise proceeds receiving 
@@ -203,4 +175,41 @@ bool WhyParser::TryAdvance()
 	}
 	else
 		return false;
+}
+
+void WhyParser::AssignToVariable(std::string& currentVarName)
+{
+	TryAdvance();
+	auto varIterator = variables.find(currentVarName);
+	//if this is the first encounter the variable should be created and stored
+	if (varIterator == variables.end())
+	{
+		SharedNodePtr newNode = std::make_shared<VariableNode>(GetExpression(), currentVarName);
+		auto&& newVariable = std::make_pair(currentVarName, newNode);
+		variables.emplace(newVariable);
+		parserNodeTree.push_back(newNode);
+	}
+	else
+	{
+		VariableNode* var = ((VariableNode*)varIterator->second.get());
+		var->SetAssignedNode(GetExpression());
+		parserNodeTree.push_back(varIterator->second);
+	}
+}
+
+void WhyParser::MakePrintNode()
+{
+	SharedNodePtr printNode = std::make_shared<PrintNode>(nullptr);
+	PrintNode* printNodePtr = ((PrintNode*)printNode.get());
+	TryAdvance();
+	if (currentToken.Is(WhyToken::Type::File))
+	{
+		TryAdvance();
+		printNodePtr->SetAssignedNode(std::make_shared<FileNode>(GetExpression()));
+	}
+	else
+	{
+		printNodePtr->SetAssignedNode(GetExpression());
+	}
+	parserNodeTree.push_back(printNode);
 }
