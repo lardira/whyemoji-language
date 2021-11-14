@@ -32,6 +32,7 @@ void WhyLexer::Tokenize(std::string& inputText)
 	}
 }
 
+
 void WhyLexer::TryGetOperator(const std::string& stringToken)
 {
 	if (stringToken == u8"➕")

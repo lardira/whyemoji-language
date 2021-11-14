@@ -37,7 +37,8 @@ std::string GetInputFromMenu()
 		return FileManager::ReadInputFile(FileManager::INPUT_PATH);
 		break;
 	default:
-		std::cout << "there is no such option";
+		std::cout << "there is no such option" << "\n";
+		return std::string();
 		break;
 	}
 }
@@ -46,6 +47,7 @@ int main()
 {
 	SetConsoleOutputCP(CP_UTF8);
 	std::locale::global(std::locale(""));
+
 
 	std::string inputFileText = GetInputFromMenu();
 	

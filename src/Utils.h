@@ -35,7 +35,7 @@ namespace Utils
 			return 3;
 		if((c & UTF8_4B_MASK) == UTF8_4B_COUNT)
 			return 4;
-		return 0;
+		return 0; //memory leak
 		// TODO: what should happen if a byte with prefix 0b10xxxxxx is passed?
 	}
 
@@ -49,7 +49,13 @@ namespace Utils
 		while (i != bytesNum)
 		{
 			int c = i;
-			i += GetUTF8CodePointSize(chars[i]);
+			int codePointSize = GetUTF8CodePointSize(chars[i]);
+			if (codePointSize < 1)
+			{
+				std::cout << "ERROR: file was not in UTF8 encoding or symbol is too big" << '\n';
+				return utf8strings;
+			}
+			i += codePointSize;
 
 			std::string utf8string;
 			for (; c < i; c++)

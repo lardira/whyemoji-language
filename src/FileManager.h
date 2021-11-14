@@ -9,8 +9,8 @@ const std::string OUTPUT_PATH = "test/output.why";
 
 static std::string ReadInputFile(std::string inputFile)
 {
-
 	std::ifstream istream(inputFile, (std::ios::binary | std::ios::in));
+	istream.imbue(std::locale("en_US.UTF-8"));
 
 	if (istream.is_open() == false)
 		return std::string();
